@@ -1,19 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matriz de Autorresponsabilidade - IGSA</title>
-    <!-- Google Fonts: Lora (titles) and Inter (body) -->
+    <title>Questionário Psicossocial - IGSA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS CDN -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <script>
         tailwind.config = {
             theme: {
@@ -21,16 +15,12 @@
                     colors: {
                         igsa: {
                             red: '#8F1D21',
-                            redHover: '#77181B',
-                            redLight: '#FDF2F2',
                             gold: '#C5A059',
-                            goldHover: '#B28E49',
-                            goldDark: '#8F6F2D',
-                            goldLight: '#FBF8F2',
-                            bg: '#FAF8F5',
-                            cardBg: '#FFFFFF',
-                            textDark: '#1E1915',
-                            textMuted: '#6B6055'
+                            ink: '#201913',
+                            mist: '#F7F3ED',
+                            paper: '#FFFFFF',
+                            line: '#E7DED0',
+                            muted: '#6D6258'
                         }
                     },
                     fontFamily: {
@@ -39,770 +29,572 @@
                     }
                 }
             }
-        }
+        };
     </script>
-    
     <style>
+        :root {
+            color-scheme: light;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #FAF8F5;
+            background:
+                radial-gradient(circle at top left, rgba(143, 29, 33, 0.12), transparent 32%),
+                radial-gradient(circle at top right, rgba(197, 160, 89, 0.14), transparent 28%),
+                linear-gradient(180deg, #fbf7f1 0%, #f7f1e8 100%);
+            color: #201913;
         }
 
         h1, h2, h3, .font-serif {
             font-family: 'Lora', serif;
         }
 
-        .radio-toolbar input[type="radio"] {
+        .question-card {
+            box-shadow: 0 18px 48px rgba(43, 28, 14, 0.06);
+        }
+
+        .choice input {
             display: none;
         }
 
-        .radio-toolbar label {
-            display: inline-block;
-            background-color: #F3F1ED;
-            color: #4A4035;
-            padding: 12px 0;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.2s ease-in-out;
-            text-align: center;
+        .choice label {
+            display: block;
             width: 100%;
-            border: 1px solid #E6E2DC;
+            border-radius: 14px;
+            padding: 0.95rem 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            border: 1px solid #e3d9cb;
+            background: #fffaf4;
+            color: #4c4035;
+            transition: transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease, border-color .18s ease;
+            cursor: pointer;
+            user-select: none;
         }
 
-        .radio-toolbar label:hover {
-            background-color: #E6E2DC;
+        @media (max-width: 640px) {
+            .choice.wide-mobile label {
+                padding: 0.95rem 0.6rem;
+                font-size: 0.9rem;
+                line-height: 1.05;
+                word-break: break-word;
+                min-height: 56px;
+            }
+        }
+
+        .choice label:hover {
             transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(48, 29, 10, 0.08);
         }
 
-        /* Classes semafóricas ativas ao selecionar a nota */
-        .dim-1-2:checked+label {
-            background-color: #EF4444 !important;
-            color: white !important;
-            border-color: #DC2626 !important;
-            box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2);
+        .choice input:checked + label {
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 14px 28px rgba(143, 29, 33, 0.18);
         }
 
-        .dim-3:checked+label {
-            background-color: #F59E0B !important;
-            color: white !important;
-            border-color: #D97706 !important;
-            box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.2);
+        .tone-1 input:checked + label,
+        .tone-2 input:checked + label {
+            background: linear-gradient(180deg, #f04444 0%, #c81e1e 100%);
         }
 
-        .dim-4-5:checked+label {
-            background-color: #10B981 !important;
-            color: white !important;
-            border-color: #059669 !important;
-            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+        .tone-3 input:checked + label {
+            background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
         }
 
-        /* Transição suave do resultado */
-        .result-panel {
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        .tone-4 input:checked + label,
+        .tone-5 input:checked + label {
+            background: linear-gradient(180deg, #22c55e 0%, #15803d 100%);
+        }
+
+        .fade-in {
+            animation: fadeIn .45s ease-out both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
-
-<body class="text-igsa-textDark pb-16">
-
-    <div class="max-w-4xl mx-auto mt-6 md:mt-12 bg-igsa-cardBg p-6 md:p-12 rounded-2xl shadow-xl border border-[#EBE6DD]">
-
-        <!-- HEADER INSTITUCIONAL -->
-        <header class="text-center mb-10 border-b border-[#EBE6DD] pb-8 relative">
-            <img src="https://imgordiano.com/wp-content/uploads/2024/05/logo.png" alt="Logo Imaculada Gordiano" 
-                 class="mx-auto h-24 mb-6 object-contain">
-            <h1 class="text-3xl md:text-4xl font-bold text-igsa-red mb-2">Matriz de Autorresponsabilidade</h1>
-            <p class="text-igsa-textMuted tracking-wider uppercase text-xs sm:text-sm font-semibold">
-                Ferramenta de Autodiagnóstico de Maturidade Profissional · IGSA
-            </p>
-            <p class="text-sm mt-4 bg-igsa-goldLight border border-[#EADFCD] text-igsa-goldDark inline-block px-5 py-2 rounded-full font-medium shadow-sm">
-                Ideal para avaliar sua postura, comunicação e autonomia no dia a dia.
-            </p>
-        </header>
-
-        <!-- FORMULÁRIO -->
-        <form id="matrizForm" onsubmit="event.preventDefault();">
-
-
-            <!-- INSTRUÇÕES E RÉGUA -->
-            <div class="bg-white p-6 rounded-xl border border-[#EBE6DD] mb-8 shadow-sm">
-                <h2 class="font-bold text-igsa-red text-lg mb-3 flex items-center gap-2">
-                    <span class="text-xl">📊</span> Como funciona a Régua de Pontuação?
-                </h2>
-                <p class="text-sm text-igsa-textMuted mb-4">
-                    Atribua com honestidade uma nota de <strong>1 a 5</strong> para cada uma das <strong>6 dimensões</strong> de comportamento abaixo. Use as descrições gerais como guia:
-                </p>
-                <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 text-xs">
-                    <div class="p-3 bg-red-50 border border-red-100 rounded-lg">
-                        <span class="block font-bold text-red-700 mb-0.5">1 - Reativo</span>
-                        <span class="text-slate-600">Só age quando cobrado; evita ou transfere responsabilidade.</span>
+<body class="min-h-screen pb-10 text-igsa-ink">
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
+        <section class="bg-igsa-paper/90 backdrop-blur rounded-[28px] border border-igsa-line shadow-[0_24px_80px_rgba(66,42,17,0.12)] overflow-hidden">
+            <header class="px-5 md:px-10 py-8 md:py-10 border-b border-igsa-line bg-gradient-to-br from-white via-white to-[#fbf4e8]">
+                <div class="flex flex-col gap-5 items-center text-center">
+                    <div class="w-[100px] h-[100px] flex items-center justify-center overflow-hidden">
+                        <img
+                            src="https://www.imgordiano.com/wp-content/uploads/2024/05/logo.png"
+                            alt="Logomarca IGSA"
+                            class="w-full h-full object-contain"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                        >
+                        <span class="hidden w-full h-full items-center justify-center rounded-2xl bg-igsa-red text-white font-bold text-xl">IG</span>
                     </div>
-                    <div class="p-3 bg-red-50/50 border border-red-100/50 rounded-lg">
-                        <span class="block font-bold text-red-500 mb-0.5">2 - Inconsistente</span>
-                        <span class="text-slate-600">Depende de lembretes e de supervisão constante.</span>
-                    </div>
-                    <div class="p-3 bg-amber-50 border border-amber-100 rounded-lg">
-                        <span class="block font-bold text-amber-700 mb-0.5">3 - Cumpridor</span>
-                        <span class="text-slate-600">Entrega o combinado quando solicitado.</span>
-                    </div>
-                    <div class="p-3 bg-emerald-50 border border-emerald-100 rounded-lg">
-                        <span class="block font-bold text-emerald-700 mb-0.5">4 - Confiável</span>
-                        <span class="text-slate-600">Assume e resolve com autonomia, sem precisar de cobrança.</span>
-                    </div>
-                    <div class="p-3 bg-emerald-100/50 border border-emerald-200 rounded-lg font-medium">
-                        <span class="block font-bold text-emerald-800 mb-0.5">5 - Dono (Ownership)</span>
-                        <span class="text-slate-700">Antecipa, previne problemas e eleva o padrão de qualidade.</span>
+                    <div>
+                        <p class="text-sm md:text-lg uppercase tracking-[0.3em] text-igsa-muted font-semibold">Questionário Psicossocial</p>
+                        <h1 class="text-3xl md:text-5xl font-bold text-igsa-red leading-tight">Trabalhadores</h1>
                     </div>
                 </div>
-            </div>
+            </header>
 
-            <!-- DIMENSÕES / PERGUNTAS -->
-            <div id="perguntas" class="space-y-8">
-
-                <!-- DIMENSÃO 1 -->
-                <div class="pergunta-card bg-[#FCFBF9] p-6 rounded-xl border border-[#EBE6DD] hover:border-igsa-gold/50 transition-all duration-300">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                        <h3 class="text-lg font-bold text-igsa-red">1. Gestão de Prazos</h3>
-                        <span class="bg-igsa-gold/10 text-igsa-goldDark text-xs font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
-                            Autogestão
-                        </span>
-                    </div>
-                    <p class="text-base text-igsa-textDark font-semibold mb-1">
-                        Pergunta-chave: <span class="italic font-medium">"Eu me antecipo ou sou cobrado?"</span>
-                    </p>
-                    <p class="text-sm text-igsa-textMuted mb-3">
-                        <strong>O que esta dimensão desenvolve:</strong> Capacidade de planejar o próprio tempo e cumprir compromissos sem depender de cobrança externa.
-                    </p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4 p-3 bg-white border border-[#F0ECE5] rounded-lg text-xs text-igsa-textMuted">
-                        <div><strong>Comportamento-meta (Nível 5):</strong> Antecipa, replaneja e comunica riscos antes de ser cobrado.</div>
-                        <div><strong>Foco de Desenvolvimento:</strong> Planejar e antecipar entregas; assumir o controle do próprio cronograma.</div>
-                    </div>
-
-                    <div class="radio-toolbar grid grid-cols-5 gap-2 md:gap-3">
-                        <div>
-                            <input type="radio" id="d1_1" name="gestao_prazos" value="1" class="dim-1-2" required onchange="atualizarDescricao('gestao_prazos', 1)">
-                            <label for="d1_1">1</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d1_2" name="gestao_prazos" value="2" class="dim-1-2" onchange="atualizarDescricao('gestao_prazos', 2)">
-                            <label for="d1_2">2</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d1_3" name="gestao_prazos" value="3" class="dim-3" onchange="atualizarDescricao('gestao_prazos', 3)">
-                            <label for="d1_3">3</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d1_4" name="gestao_prazos" value="4" class="dim-4-5" onchange="atualizarDescricao('gestao_prazos', 4)">
-                            <label for="d1_4">4</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d1_5" name="gestao_prazos" value="5" class="dim-4-5" onchange="atualizarDescricao('gestao_prazos', 5)">
-                            <label for="d1_5">5</label>
+            <div class="px-5 md:px-10 py-8 md:py-10">
+                <section class="grid grid-cols-1 gap-6 mb-8">
+                    <div class="bg-[#fcf8f1] border border-igsa-line rounded-3xl p-5 md:p-6 question-card">
+                        <h2 class="text-xl md:text-2xl font-bold text-igsa-red mb-3">Como responder este questionário?</h2>
+                        <p class="text-sm md:text-base text-igsa-muted leading-relaxed mb-4">
+                            O questionário é composto por 18 itens distribuídos em 3 blocos. Você deve responder cada item classificando-o de acordo com a escala fornecida. ao final do questionário, suas respostas serão analisadas e você receberá um relatório com a avaliação.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                            <div class="rounded-2xl bg-white border border-igsa-line p-4">
+                                <p class="text-xs uppercase tracking-wider font-bold text-igsa-muted mb-1">Escala</p>
+                                <p class="font-semibold">1 = Nunca</p>
+                                <p class="font-semibold">2 = Raramente</p>
+                                <p class="font-semibold">3 = Às vezes</p>
+                                <p class="font-semibold">4 = Frequentemente</p>
+                                <p class="font-semibold">5 = Sempre</p>
+                            </div>
+                            <div class="rounded-2xl bg-white border border-igsa-line p-4">
+                                <p class="text-xs uppercase tracking-wider font-bold text-igsa-muted mb-1">Pontuação</p>
+                                <p class="font-semibold">Total de 18 a 90 pontos</p>
+                            </div>
+                            <div class="rounded-2xl bg-white border border-igsa-line p-4">
+                                <p class="text-xs uppercase tracking-wider font-bold text-igsa-muted mb-1">Resultado</p>
+                                <p class="font-semibold">Classificação por faixa e blocos</p>
+                            </div>
                         </div>
                     </div>
-                    <div id="desc_gestao_prazos" class="mt-2.5 text-xs text-igsa-textMuted font-medium italic min-h-[16px] transition-all"></div>
+
+                    <div class="bg-white border border-igsa-line rounded-3xl p-5 md:p-6 question-card">
+                        <h2 class="text-xl md:text-2xl font-bold text-igsa-red mb-4">Dados do participante</h2>
+                        <form id="questionnaireForm" class="space-y-4">
+                            <input name="data_resposta" type="hidden">
+                            <input name="timestamp_dispositivo" type="hidden">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <label class="space-y-2 text-sm font-semibold text-igsa-ink">
+                                    Nome
+                                    <input name="nome" type="text" placeholder="Digite o nome" class="w-full rounded-2xl border border-igsa-line bg-igsa-mist px-4 py-3 outline-none focus:ring-4 focus:ring-red-200/60 focus:border-igsa-red">
+                                </label>
+                                <label class="space-y-2 text-sm font-semibold text-igsa-ink">
+                                    Setor / Área
+                                    <input name="setor" type="text" placeholder="Ex.: Jurídico" class="w-full rounded-2xl border border-igsa-line bg-igsa-mist px-4 py-3 outline-none focus:ring-4 focus:ring-red-200/60 focus:border-igsa-red">
+                                </label>
+                                <label class="space-y-2 text-sm font-semibold text-igsa-ink">
+                                    Cargo / Função
+                                    <input name="cargo" type="text" placeholder="Ex.: Analista" class="w-full rounded-2xl border border-igsa-line bg-igsa-mist px-4 py-3 outline-none focus:ring-4 focus:ring-red-200/60 focus:border-igsa-red">
+                                </label>
+                                <label class="space-y-2 text-sm font-semibold text-igsa-ink">
+                                    Tempo de empresa
+                                    <input name="tempo_empresa" type="text" placeholder="Ex.: 1 ano e 3 meses" class="w-full rounded-2xl border border-igsa-line bg-igsa-mist px-4 py-3 outline-none focus:ring-4 focus:ring-red-200/60 focus:border-igsa-red">
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <section id="questionnaireRoot" class="space-y-6"></section>
+
+                <div class="mt-8 flex flex-col gap-3 items-stretch md:items-center">
+                    <button id="submitBtn" type="button" class="inline-flex items-center justify-center gap-3 rounded-full bg-igsa-red px-6 py-4 md:px-10 md:py-4 text-white font-bold shadow-lg shadow-red-900/15 transition-transform hover:-translate-y-0.5 hover:bg-[#7b181c] focus:outline-none focus:ring-4 focus:ring-red-200/70">
+                        <span id="submitBtnText">Gerar diagnóstico</span>
+                        <span id="submitSpinner" class="hidden h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin"></span>
+                    </button>
+                    <p id="sendStatus" class="text-sm text-igsa-muted text-center"></p>
                 </div>
 
-                <!-- DIMENSÃO 2 -->
-                <div class="pergunta-card bg-[#FCFBF9] p-6 rounded-xl border border-[#EBE6DD] hover:border-igsa-gold/50 transition-all duration-300">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                        <h3 class="text-lg font-bold text-igsa-red">2. Qualidade das Entregas</h3>
-                        <span class="bg-igsa-gold/10 text-igsa-goldDark text-xs font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
-                            Disciplina Técnica
-                        </span>
-                    </div>
-                    <p class="text-base text-igsa-textDark font-semibold mb-1">
-                        Pergunta-chave: <span class="italic font-medium">"Preciso de revisão constante?"</span>
-                    </p>
-                    <p class="text-sm text-igsa-textMuted mb-3">
-                        <strong>O que esta dimensão desenvolve:</strong> Padrão pessoal de excelência técnica e disciplina na revisão do próprio trabalho.
-                    </p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4 p-3 bg-white border border-[#F0ECE5] rounded-lg text-xs text-igsa-textMuted">
-                        <div><strong>Comportamento-meta (Nível 5):</strong> Entrega autorrevisada e pronta para uso, sem retrabalho.</div>
-                        <div><strong>Foco de Desenvolvimento:</strong> Criar rotina de autorrevisão e checklists antes de entregar.</div>
+                <section id="resultSection" class="hidden opacity-0 mt-10 md:mt-12 rounded-[28px] border border-igsa-line bg-white p-5 md:p-8 question-card fade-in">
+                    <div class="flex items-start justify-between gap-4 flex-wrap border-b border-igsa-line pb-5 mb-6">
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.3em] text-igsa-muted font-semibold mb-2">Resultado personalizado</p>
+                            <h2 class="text-2xl md:text-3xl font-bold text-igsa-red">Resumo do diagnóstico</h2>
+                        </div>
+                        <span id="overallBadge" class="inline-flex items-center rounded-full px-4 py-2 text-sm font-bold uppercase tracking-wider bg-[#f5efe6] text-[#7a5922]">Aguardando resposta</span>
                     </div>
 
-                    <div class="radio-toolbar grid grid-cols-5 gap-2 md:gap-3">
-                        <div>
-                            <input type="radio" id="d2_1" name="qualidade_entregas" value="1" class="dim-1-2" required onchange="atualizarDescricao('qualidade_entregas', 1)">
-                            <label for="d2_1">1</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d2_2" name="qualidade_entregas" value="2" class="dim-1-2" onchange="atualizarDescricao('qualidade_entregas', 2)">
-                            <label for="d2_2">2</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d2_3" name="qualidade_entregas" value="3" class="dim-3" onchange="atualizarDescricao('qualidade_entregas', 3)">
-                            <label for="d2_3">3</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d2_4" name="qualidade_entregas" value="4" class="dim-4-5" onchange="atualizarDescricao('qualidade_entregas', 4)">
-                            <label for="d2_4">4</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d2_5" name="qualidade_entregas" value="5" class="dim-4-5" onchange="atualizarDescricao('qualidade_entregas', 5)">
-                            <label for="d2_5">5</label>
-                        </div>
-                    </div>
-                    <div id="desc_qualidade_entregas" class="mt-2.5 text-xs text-igsa-textMuted font-medium italic min-h-[16px] transition-all"></div>
-                </div>
-
-                <!-- DIMENSÃO 3 -->
-                <div class="pergunta-card bg-[#FCFBF9] p-6 rounded-xl border border-[#EBE6DD] hover:border-igsa-gold/50 transition-all duration-300">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                        <h3 class="text-lg font-bold text-igsa-red">3. Autonomia Decisória</h3>
-                        <span class="bg-igsa-gold/10 text-igsa-goldDark text-xs font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
-                            Critério Decisório
-                        </span>
-                    </div>
-                    <p class="text-base text-igsa-textDark font-semibold mb-1">
-                        Pergunta-chave: <span class="italic font-medium">"Decido com critério ou peço validação de tudo — ou decido sozinho o que deveria ser compartilhado?"</span>
-                    </p>
-                    <p class="text-sm text-igsa-textMuted mb-3">
-                        <strong>O que esta dimensão desenvolve:</strong> Segurança para decidir dentro da própria competência e bom senso para escalar o que exige aprovação.
-                    </p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4 p-3 bg-white border border-[#F0ECE5] rounded-lg text-xs text-igsa-textMuted">
-                        <div><strong>Comportamento-meta (Nível 5):</strong> Decide com segurança o que está em sua alçada e escala proativamente o que exige aprovação, sem isolar-se.</div>
-                        <div><strong>Foco de Desenvolvimento:</strong> Mapear o que está e o que não está na própria alçada; comunicar decisões com transparência.</div>
-                    </div>
-
-                    <div class="radio-toolbar grid grid-cols-5 gap-2 md:gap-3">
-                        <div>
-                            <input type="radio" id="d3_1" name="autonomia_decisoria" value="1" class="dim-1-2" required onchange="atualizarDescricao('autonomia_decisoria', 1)">
-                            <label for="d3_1">1</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d3_2" name="autonomia_decisoria" value="2" class="dim-1-2" onchange="atualizarDescricao('autonomia_decisoria', 2)">
-                            <label for="d3_2">2</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d3_3" name="autonomia_decisoria" value="3" class="dim-3" onchange="atualizarDescricao('autonomia_decisoria', 3)">
-                            <label for="d3_3">3</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d3_4" name="autonomia_decisoria" value="4" class="dim-4-5" onchange="atualizarDescricao('autonomia_decisoria', 4)">
-                            <label for="d3_4">4</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d3_5" name="autonomia_decisoria" value="5" class="dim-4-5" onchange="atualizarDescricao('autonomia_decisoria', 5)">
-                            <label for="d3_5">5</label>
-                        </div>
-                    </div>
-                    <div id="desc_autonomia_decisoria" class="mt-2.5 text-xs text-igsa-textMuted font-medium italic min-h-[16px] transition-all"></div>
-                </div>
-
-                <!-- DIMENSÃO 4 -->
-                <div class="pergunta-card bg-[#FCFBF9] p-6 rounded-xl border border-[#EBE6DD] hover:border-igsa-gold/50 transition-all duration-300">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                        <h3 class="text-lg font-bold text-igsa-red">4. Comunicação</h3>
-                        <span class="bg-igsa-gold/10 text-igsa-goldDark text-xs font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
-                            Transparência
-                        </span>
-                    </div>
-                    <p class="text-base text-igsa-textDark font-semibold mb-1">
-                        Pergunta-chave: <span class="italic font-medium">"Informo ou reajo?"</span>
-                    </p>
-                    <p class="text-sm text-igsa-textMuted mb-3">
-                        <strong>O que esta dimensão desenvolve:</strong> Iniciativa de comunicar status, dúvidas e riscos antes de serem questionados.
-                    </p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4 p-3 bg-white border border-[#F0ECE5] rounded-lg text-xs text-igsa-textMuted">
-                        <div><strong>Comportamento-meta (Nível 5):</strong> Informa status, dúvidas e riscos proativamente.</div>
-                        <div><strong>Foco de Desenvolvimento:</strong> Comunicar status, dúvidas e riscos antes de serem cobrados.</div>
-                    </div>
-
-                    <div class="radio-toolbar grid grid-cols-5 gap-2 md:gap-3">
-                        <div>
-                            <input type="radio" id="d4_1" name="comunicacao" value="1" class="dim-1-2" required onchange="atualizarDescricao('comunicacao', 1)">
-                            <label for="d4_1">1</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d4_2" name="comunicacao" value="2" class="dim-1-2" onchange="atualizarDescricao('comunicacao', 2)">
-                            <label for="d4_2">2</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d4_3" name="comunicacao" value="3" class="dim-3" onchange="atualizarDescricao('comunicacao', 3)">
-                            <label for="d4_3">3</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d4_4" name="comunicacao" value="4" class="dim-4-5" onchange="atualizarDescricao('comunicacao', 4)">
-                            <label for="d4_4">4</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d4_5" name="comunicacao" value="5" class="dim-4-5" onchange="atualizarDescricao('comunicacao', 5)">
-                            <label for="d4_5">5</label>
-                        </div>
-                    </div>
-                    <div id="desc_comunicacao" class="mt-2.5 text-xs text-igsa-textMuted font-medium italic min-h-[16px] transition-all"></div>
-                </div>
-
-                <!-- DIMENSÃO 5 -->
-                <div class="pergunta-card bg-[#FCFBF9] p-6 rounded-xl border border-[#EBE6DD] hover:border-igsa-gold/50 transition-all duration-300">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                        <h3 class="text-lg font-bold text-igsa-red">5. Gestão de Erros</h3>
-                        <span class="bg-igsa-gold/10 text-igsa-goldDark text-xs font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
-                            Maturidade
-                        </span>
-                    </div>
-                    <p class="text-base text-igsa-textDark font-semibold mb-1">
-                        Pergunta-chave: <span class="italic font-medium">"Escondo ou assumo rapidamente?"</span>
-                    </p>
-                    <p class="text-sm text-igsa-textMuted mb-3">
-                        <strong>O que esta dimensão desenvolve:</strong> Postura diante de falhas: assumir, corrigir e prevenir a recorrência.
-                    </p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4 p-3 bg-white border border-[#F0ECE5] rounded-lg text-xs text-igsa-textMuted">
-                        <div><strong>Comportamento-meta (Nível 5):</strong> Assume rápido, corrige e evita a recorrência do erro.</div>
-                        <div><strong>Foco de Desenvolvimento:</strong> Adotar postura de dono diante do erro e tratar a causa raiz.</div>
-                    </div>
-
-                    <div class="radio-toolbar grid grid-cols-5 gap-2 md:gap-3">
-                        <div>
-                            <input type="radio" id="d5_1" name="gestao_erros" value="1" class="dim-1-2" required onchange="atualizarDescricao('gestao_erros', 1)">
-                            <label for="d5_1">1</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d5_2" name="gestao_erros" value="2" class="dim-1-2" onchange="atualizarDescricao('gestao_erros', 2)">
-                            <label for="d5_2">2</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d5_3" name="gestao_erros" value="3" class="dim-3" onchange="atualizarDescricao('gestao_erros', 3)">
-                            <label for="d5_3">3</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d5_4" name="gestao_erros" value="4" class="dim-4-5" onchange="atualizarDescricao('gestao_erros', 4)">
-                            <label for="d5_4">4</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d5_5" name="gestao_erros" value="5" class="dim-4-5" onchange="atualizarDescricao('gestao_erros', 5)">
-                            <label for="d5_5">5</label>
-                        </div>
-                    </div>
-                    <div id="desc_gestao_erros" class="mt-2.5 text-xs text-igsa-textMuted font-medium italic min-h-[16px] transition-all"></div>
-                </div>
-
-                <!-- DIMENSÃO 6 -->
-                <div class="pergunta-card bg-[#FCFBF9] p-6 rounded-xl border border-[#EBE6DD] hover:border-igsa-gold/50 transition-all duration-300">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                        <h3 class="text-lg font-bold text-igsa-red">6. Consciência de Impacto</h3>
-                        <span class="bg-igsa-gold/10 text-igsa-goldDark text-xs font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
-                            Visão Estratégica
-                        </span>
-                    </div>
-                    <p class="text-base text-igsa-textDark font-semibold mb-1">
-                        Pergunta-chave: <span class="italic font-medium">"Penso só no jurídico ou no negócio?"</span>
-                    </p>
-                    <p class="text-sm text-igsa-textMuted mb-3">
-                        <strong>O que esta dimensão desenvolve:</strong> Capacidade de conectar decisões técnicas ao impacto real no negócio e na confiança do cliente.
-                    </p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4 p-3 bg-white border border-[#F0ECE5] rounded-lg text-xs text-igsa-textMuted">
-                        <div><strong>Comportamento-meta (Nível 5):</strong> Decide considerando o impacto no negócio e na confiabilidade institucional.</div>
-                        <div><strong>Foco de Desenvolvimento:</strong> Ampliar a visão de negócio nas decisões do dia a dia.</div>
-                    </div>
-
-                    <div class="radio-toolbar grid grid-cols-5 gap-2 md:gap-3">
-                        <div>
-                            <input type="radio" id="d6_1" name="consciencia_impacto" value="1" class="dim-1-2" required onchange="atualizarDescricao('consciencia_impacto', 1)">
-                            <label for="d6_1">1</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d6_2" name="consciencia_impacto" value="2" class="dim-1-2" onchange="atualizarDescricao('consciencia_impacto', 2)">
-                            <label for="d6_2">2</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d6_3" name="consciencia_impacto" value="3" class="dim-3" onchange="atualizarDescricao('consciencia_impacto', 3)">
-                            <label for="d6_3">3</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d6_4" name="consciencia_impacto" value="4" class="dim-4-5" onchange="atualizarDescricao('consciencia_impacto', 4)">
-                            <label for="d6_4">4</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="d6_5" name="consciencia_impacto" value="5" class="dim-4-5" onchange="atualizarDescricao('consciencia_impacto', 5)">
-                            <label for="d6_5">5</label>
-                        </div>
-                    </div>
-                    <div id="desc_consciencia_impacto" class="mt-2.5 text-xs text-igsa-textMuted font-medium italic min-h-[16px] transition-all"></div>
-                </div>
-
-            </div>
-
-            <!-- BOTÃO GERAR DIAGNÓSTICO -->
-            <div class="mt-12 text-center">
-                <button type="button" id="btnCalcular" onclick="calcularESalvar()"
-                    class="bg-igsa-red hover:bg-igsa-redHover text-white font-bold py-4 px-12 rounded-full w-full md:w-auto shadow-lg transition-all duration-300 text-lg hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-igsa-red/30 flex items-center justify-center gap-3 mx-auto">
-                    <span id="btnText">Gerar Meu Diagnóstico</span>
-                    <span id="btnSpinner" class="hidden animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></span>
-                </button>
-            </div>
-
-            <!-- PAINEL DE RESULTADOS (Oculto até calcular) -->
-            <div id="resultadoSection" class="hidden opacity-0 result-panel mt-16 bg-white p-6 md:p-10 border border-[#EBE6DD] rounded-2xl shadow-inner relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-igsa-red via-igsa-gold to-igsa-red"></div>
-                
-                <h2 class="text-2xl font-bold text-center text-igsa-red mb-1 font-serif">Seu Diagnóstico de Maturidade</h2>
-                <p class="text-center text-igsa-textMuted text-xs uppercase tracking-wider mb-8">Roda de Autorresponsabilidade IGSA</p>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center justify-center">
-                    <!-- Gráfico -->
-                    <div class="w-full flex justify-center p-2 bg-[#FCFBF9] border border-[#F0ECE5] rounded-xl shadow-sm" style="max-height: 420px;">
-                        <canvas id="radarChart" class="max-w-full"></canvas>
-                    </div>
-                    
-                    <!-- Métricas -->
-                    <div class="w-full space-y-4">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="p-4 bg-igsa-goldLight rounded-lg border border-[#EADFCD]">
-                                <p class="text-[10px] font-bold text-igsa-textMuted uppercase tracking-wider">Pontuação Total</p>
-                                <p class="text-2xl font-bold text-igsa-red mt-1" id="pontuacaoTotal">0 / 30</p>
-                                <div class="w-full bg-[#E6E2DC] h-1.5 rounded-full mt-2 overflow-hidden">
-                                    <div id="scoreBar" class="bg-igsa-gold h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="rounded-3xl border border-igsa-line bg-white p-4">
+                                <p class="text-[11px] uppercase tracking-wider text-igsa-muted font-bold">Pontuação total</p>
+                                <p id="totalScore" class="mt-1 text-3xl font-bold text-igsa-red">0 / 90</p>
+                                <div class="mt-3 h-2 rounded-full bg-igsa-line overflow-hidden">
+                                    <div id="scoreBar" class="h-full w-0 rounded-full bg-gradient-to-r from-igsa-red to-igsa-gold transition-all duration-500"></div>
                                 </div>
                             </div>
-                            <div class="p-4 bg-igsa-goldLight rounded-lg border border-[#EADFCD]">
-                                <p class="text-[10px] font-bold text-igsa-textMuted uppercase tracking-wider">Nível de Maturidade</p>
-                                <p class="text-2xl font-bold text-igsa-goldDark mt-1" id="percentualMaturidade">0%</p>
+                            <div class="rounded-3xl border border-igsa-line bg-white p-4">
+                                <p class="text-[11px] uppercase tracking-wider text-igsa-muted font-bold">Média geral</p>
+                                <p id="overallAverage" class="mt-1 text-3xl font-bold text-[#a06f23]">0.0</p>
+                            </div>
+                            <div class="rounded-3xl border border-igsa-line bg-white p-4">
+                                <p class="text-[11px] uppercase tracking-wider text-igsa-muted font-bold">Percentual</p>
+                                <p id="overallPercent" class="mt-1 text-3xl font-bold text-emerald-700">0%</p>
                             </div>
                         </div>
-                        
-                        <div class="p-4 bg-white rounded-lg border border-[#EBE6DD]">
-                            <p class="text-[10px] font-bold text-igsa-textMuted uppercase tracking-wider mb-1.5">Classificação</p>
-                            <span id="classificacaoLabel" class="inline-block px-3 py-1.5 rounded-md font-bold text-sm uppercase tracking-wider">
-                                Preencha todas as notas
-                            </span>
+
+                        <div class="rounded-3xl border border-igsa-line bg-white p-4 md:p-5">
+                            <p class="text-[11px] uppercase tracking-wider text-igsa-muted font-bold mb-2">Classificação</p>
+                            <p id="classificationText" class="text-xl font-bold text-igsa-ink">Preencha e gere o diagnóstico</p>
+                            <p id="summaryText" class="mt-2 text-sm text-igsa-muted leading-relaxed"></p>
                         </div>
-                        
-                        <div class="p-4 bg-red-50/40 rounded-lg border border-red-100">
-                            <p class="text-[10px] font-bold text-red-800 uppercase tracking-wider mb-1">Dimensão Prioritária (Atenção Imediata)</p>
-                            <p class="text-base font-bold text-red-700" id="dimensaoPrioritaria">—</p>
-                            <p class="text-xs text-red-600/90 mt-1">Foco prioritário sugerido para melhoria de postura e entrega.</p>
+
+                        <div class="rounded-3xl border border-igsa-line bg-[#fffaf4] p-4 md:p-5">
+                            <p class="text-[11px] uppercase tracking-wider text-igsa-muted font-bold mb-2">Ponto de atenção prioritário</p>
+                            <p id="priorityLabel" class="text-lg font-bold text-igsa-red">—</p>
+                            <p id="priorityTip" class="mt-2 text-sm text-igsa-muted leading-relaxed"></p>
                         </div>
                     </div>
-                </div>
 
-                <!-- Painel de Recomendação -->
-                <div class="mt-8 p-5 bg-[#FAF8F5] border border-[#EADFCD] rounded-xl">
-                    <h4 class="font-bold text-sm text-igsa-red uppercase tracking-wider mb-2 flex items-center gap-2">
-                        <span>💡</span> Recomendação do Diagnóstico
-                    </h4>
-                    <p class="text-sm text-igsa-textDark leading-relaxed" id="recomendacaoTexto">
-                        Carregando recomendação...
-                    </p>
-                </div>
+                    <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4" id="blockSummary"></div>
 
+                    <div class="mt-6 rounded-3xl border border-igsa-line bg-[#faf5eb] p-5">
+                        <p class="text-[11px] uppercase tracking-wider text-igsa-muted font-bold mb-2">Recomendação final</p>
+                        <p id="recommendationText" class="text-sm md:text-base leading-relaxed text-igsa-ink"></p>
+                    </div>
+                </section>
 
+                <section class="mt-6 rounded-3xl border border-igsa-line bg-[#fcf8f1] p-5 md:p-6 question-card">
+                    <div class="text-center mb-4">
+                        <p class="text-[11px] uppercase tracking-[0.3em] text-igsa-muted font-semibold mb-1">Precisa falar com a gente?</p>
+                        <h3 class="text-lg md:text-xl font-bold text-igsa-red">Escolha o canal mais rápido</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <a href="mailto:trabalhista@imgordiano.com.br" class="inline-flex items-center justify-center rounded-2xl border border-igsa-line bg-white px-4 py-4 font-semibold text-igsa-ink transition-all hover:border-igsa-red hover:text-igsa-red hover:shadow-md">
+                            Nos envie um email
+                        </a>
+                        <a href="https://wa.me/558530665236?text=Ol%C3%A1%2C%20quero%20falar%20sobre%20o%20question%C3%A1rio%20psicossocial." target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-2xl border border-igsa-line bg-white px-4 py-4 font-semibold text-igsa-ink transition-all hover:border-emerald-600 hover:text-emerald-700 hover:shadow-md">
+                            Falar no WhatsApp
+                        </a>
+                    </div>
+                </section>
             </div>
+        </section>
+    </main>
 
-        </form>
-    </div>
-
-    <!-- CODE LOGIC -->
     <script>
-        let myChart = null;
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwySJ_gQmlRKbb-OptUqsnTBL2UaIEqWrI857YHnE4SlAVT0TZBn3LuTLdyKC6qsrgrqA/exec';
 
+        const scaleOptions = [
+            { value: 1, label: 'Nunca', tone: 'tone-1' },
+            { value: 2, label: 'Raramente', tone: 'tone-2' },
+            { value: 3, label: 'Às vezes', tone: 'tone-3' },
+            { value: 4, label: 'Frequentemente', tone: 'tone-4', extraClass: 'wide-mobile' },
+            { value: 5, label: 'Sempre', tone: 'tone-5' }
+        ];
 
+        const blocks = [
+            {
+                slug: 'bloco1',
+                title: 'Bloco 1',
+                subtitle: 'Carga e Organização do Trabalho',
+                focus: 'carga de trabalho, autonomia operacional e previsibilidade',
+                items: [
+                    'Consigo realizar minhas tarefas dentro do horário normal, sem precisar de horas extras constantes.',
+                    'Considero que a quantidade de tarefas é compatível com o tempo e os recursos disponíveis.',
+                    'Tenho clareza sobre minhas responsabilidades e o que é esperado de mim no trabalho.',
+                    'As metas e prazos definidos são realistas e alcançáveis.',
+                    'Tenho autonomia para organizar minha rotina de trabalho de forma que considero mais eficiente.',
+                    'Consigo tirar pausas regulares durante a jornada de trabalho.'
+                ],
+                tip: 'Quando este bloco fica baixo, a leitura mais comum é excesso de demanda, pouco controle da rotina ou falta de clareza de papéis.'
+            },
+            {
+                slug: 'bloco2',
+                title: 'Bloco 2',
+                subtitle: 'Relações Interpessoais e Liderança',
+                focus: 'qualidade da liderança, confiança relacional e convivência',
+                items: [
+                    'O relacionamento com minha liderança direta é respeitoso e profissional.',
+                    'Recebo orientação e feedback adequados da minha liderança sobre meu trabalho.',
+                    'Sinto que posso comunicar problemas ao meu gestor sem medo de represálias.',
+                    'O relacionamento com meus colegas de trabalho é saudável e colaborativo.',
+                    'Situações de conflito são tratadas de forma adequada pela liderança.',
+                    'Não fui exposto(a) a situações de humilhação, constrangimento ou tratamento desrespeitoso.'
+                ],
+                tip: 'Pontuação baixa aqui normalmente indica ruído de comunicação, baixa segurança psicológica ou falhas na gestão de conflitos.'
+            },
+            {
+                slug: 'bloco3',
+                title: 'Bloco 3',
+                subtitle: 'Bem-estar e Saúde Mental',
+                focus: 'desconexão, energia emocional, reconhecimento e bem-estar',
+                items: [
+                    'Consigo me desconectar do trabalho ao término da jornada (sem mensagens fora do horário).',
+                    'Sinto que o trabalho não prejudica minha saúde emocional ou psicológica.',
+                    'Não me sinto exausto(a) emocionalmente ao final da semana de forma recorrente.',
+                    'Sinto orgulho e satisfação com o trabalho que realizo.',
+                    'Sinto que meu trabalho é reconhecido e valorizado pela empresa.',
+                    'A empresa demonstra preocupação genuína com o bem-estar dos trabalhadores.'
+                ],
+                tip: 'Aqui o resultado aponta como a rotina está impactando energia, engajamento e percepção de valor no dia a dia.'
+            }
+        ];
 
-        // Régua de descrições para exibição interativa
-        const reguaDescricoes = {
-            1: "🔴 1 - Reativo: Só age quando cobrado; evita ou transfere a responsabilidade.",
-            2: "🔴 2 - Inconsistente: Depende de lembretes e de supervisão constante.",
-            3: "🟡 3 - Cumpridor: Entrega o combinado quando solicitado.",
-            4: "🟢 4 - Confiável: Assume e resolve com autonomia, sem precisar de cobrança.",
-            5: "🟢 5 - Dono (Ownership): Antecipa, previne problemas e eleva o padrão de excelência."
+        const questionAdvice = {
+            '0-0': 'Revise a distribuição de tarefas e o volume de horas extras.',
+            '0-1': 'Reavalie a carga e os recursos necessários para a demanda atual.',
+            '0-2': 'Defina papéis, expectativas e entregas com mais clareza.',
+            '0-3': 'Ajuste prazos e combine metas mais realistas quando necessário.',
+            '0-4': 'Dê mais espaço para autonomia e organização própria da rotina.',
+            '0-5': 'Inclua pausas como parte da rotina, não como exceção.',
+            '1-0': 'Fortaleça o padrão de respeito e previsibilidade na relação com a liderança.',
+            '1-1': 'Amplie a qualidade do feedback e o direcionamento do trabalho.',
+            '1-2': 'Crie um ambiente mais seguro para trazer problemas sem receio.',
+            '1-3': 'Observe se a colaboração entre pares está apoiando ou pressionando o time.',
+            '1-4': 'Estruture melhor a mediação de conflitos e acordos de convivência.',
+            '1-5': 'Trate sinais de humilhação ou desrespeito com prioridade máxima.',
+            '2-0': 'Proteja a desconexão fora do expediente e os limites de disponibilidade.',
+            '2-1': 'Observe o impacto emocional da rotina e ajuste o que estiver adoecendo.',
+            '2-2': 'Monitore sinais de exaustão e recupere pausas reais ao longo da semana.',
+            '2-3': 'Reforce reconhecimento, propósito e sentido do trabalho realizado.',
+            '2-4': 'Aumente a percepção de valorização com devolutivas mais concretas.',
+            '2-5': 'Torne o cuidado institucional com o bem-estar mais visível e prático.'
         };
 
-        function atualizarDescricao(dim, nota) {
-            const container = document.getElementById(`desc_${dim}`);
-            if (container) {
-                container.innerHTML = reguaDescricoes[nota];
-                // Aplica cor na descrição conforme a nota
-                container.className = "mt-2.5 text-xs font-semibold italic transition-all duration-200 ";
-                if (nota <= 2) {
-                    container.classList.add("text-red-600");
-                } else if (nota === 3) {
-                    container.classList.add("text-amber-600");
-                } else {
-                    container.classList.add("text-emerald-600");
-                }
-            }
+        function renderQuestionnaire() {
+            const root = document.getElementById('questionnaireRoot');
+            root.innerHTML = blocks.map((block, blockIndex) => {
+                const questions = block.items.map((question, questionIndex) => {
+                    const fieldName = `${block.slug}_q${questionIndex + 1}`;
+                    return `
+                        <div class="rounded-3xl border border-igsa-line bg-white p-5 md:p-6 question-card">
+                            <div class="flex justify-end mb-4">
+                                <span class="inline-flex rounded-full bg-[#f4ead6] text-[#8c6727] px-3 py-1 text-xs font-bold uppercase tracking-wider">${questionIndex + 1}/6</span>
+                            </div>
+                            <p class="text-sm md:text-base font-semibold leading-relaxed text-igsa-ink mb-5">${questionIndex + 1}. ${question}</p>
+                            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                                ${scaleOptions.map(option => `
+                                    <div class="choice ${option.tone} ${option.extraClass || ''}">
+                                        <input type="radio" id="${fieldName}_${option.value}" name="${fieldName}" value="${option.value}" required>
+                                        <label for="${fieldName}_${option.value}">${option.label}</label>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <p class="mt-4 text-xs text-igsa-muted leading-relaxed">Escala de concordância. Quanto maior a nota, maior a prontidão percebida nesse item.</p>
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <section class="space-y-4">
+                        <div class="px-1 text-center space-y-2">
+                            <p class="text-xs uppercase tracking-[0.3em] text-igsa-muted font-semibold">${block.title}</p>
+                            <h2 class="text-2xl md:text-3xl font-bold text-igsa-red">${block.subtitle}</h2>
+                            <div class="max-w-2xl mx-auto text-sm text-igsa-muted">Foco: ${block.focus}</div>
+                        </div>
+                        <div class="space-y-4">${questions}</div>
+                    </section>
+                `;
+            }).join('');
         }
 
-        // Função que realiza o cálculo e faz o envio ao Google Sheets
-        function calcularESalvar() {
-            const dimensoes = ['gestao_prazos', 'qualidade_entregas', 'autonomia_decisoria', 'comunicacao', 'gestao_erros', 'consciencia_impacto'];
-            const nomesDimensoes = [
-                'Gestão de Prazos', 'Qualidade das Entregas', 'Autonomia Decisória',
-                'Comunicação', 'Gestão de Erros', 'Consciência de Impacto'
+        function getFieldValue(name) {
+            const checked = document.querySelector(`input[name="${name}"]:checked`);
+            return checked ? Number(checked.value) : null;
+        }
+
+        function readinessLabel(percent) {
+            if (percent >= 85) return { label: 'Prontidão avançada', color: 'bg-emerald-100 text-emerald-800' };
+            if (percent >= 70) return { label: 'Prontidão parcial', color: 'bg-amber-100 text-amber-800' };
+            if (percent >= 50) return { label: 'Prontidão baixa', color: 'bg-orange-100 text-orange-800' };
+            return { label: 'Não conformidade grave', color: 'bg-red-100 text-red-800' };
+        }
+
+        function blockStatus(avg) {
+            if (avg >= 4.3) return { label: 'Muito forte', color: 'text-emerald-700', badge: 'bg-emerald-100 text-emerald-800' };
+            if (avg >= 3.5) return { label: 'Adequado', color: 'text-[#8a5f21]', badge: 'bg-amber-100 text-amber-800' };
+            if (avg >= 2.6) return { label: 'Atenção', color: 'text-orange-700', badge: 'bg-orange-100 text-orange-800' };
+            return { label: 'Crítico', color: 'text-red-700', badge: 'bg-red-100 text-red-800' };
+        }
+
+        function buildDeviceTimestamp() {
+            const now = new Date();
+            const pad = value => String(value).padStart(2, '0');
+            const localDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+            const localTime = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+            return {
+                localDate,
+                deviceTimestamp: `${localDate} ${localTime}`
+            };
+        }
+
+        function recommendationByScore(percent, weakestBlockIndex, weakestQuestionKey) {
+            const block = blocks[weakestBlockIndex];
+            const blockMessages = [
+                'Priorize revisão de demanda, clareza de escopo e proteção de pausas.',
+                'Ajuste a qualidade da liderança, o feedback e a segurança para falar de problemas.',
+                'Reforce limites de jornada, recuperação emocional e reconhecimento do trabalho.'
             ];
-            
-            let valores = [];
-            let total = 0;
-            let todasRespondidas = true;
 
-            // Extrai notas e valida se todas foram respondidas
-            for (let i = 0; i < dimensoes.length; i++) {
-                const radios = document.getElementsByName(dimensoes[i]);
-                let respondido = false;
-                for (let j = 0; j < radios.length; j++) {
-                    if (radios[j].checked) {
-                        const val = parseInt(radios[j].value);
-                        valores.push(val);
-                        total += val;
-                        respondido = true;
-                        break;
-                    }
-                }
-                if (!respondido) {
-                    todasRespondidas = false;
-                }
-            }
+            const base = percent >= 85
+                ? 'O grupo está em boa condição geral. A recomendação agora é manter a consistência e evitar que sinais pequenos virem risco.'
+                : percent >= 70
+                    ? 'O cenário é positivo, mas ainda há pontos para consolidar. Vale atuar nas fricções do bloco mais fraco.'
+                    : percent >= 50
+                        ? 'O resultado pede ação prática imediata. Foque no bloco prioritário e desdobre ações simples e visíveis.'
+                        : 'O resultado pede intervenção rápida e objetiva. Comece pelo bloco prioritário e trate os itens mais baixos primeiro.';
 
-            if (!todasRespondidas) {
-                alert('Por favor, responda todas as 6 perguntas da matriz antes de gerar seu diagnóstico.');
+            const specific = questionAdvice[weakestQuestionKey] ? ` Questão prioritária: ${questionAdvice[weakestQuestionKey]}` : '';
+            return `${base} ${blockMessages[weakestBlockIndex]}${specific} ${block ? `Bloco de atenção: ${block.subtitle}.` : ''}`;
+        }
+
+        function buildBlockSummary(blockAverages) {
+            const container = document.getElementById('blockSummary');
+            container.innerHTML = blocks.map((block, index) => {
+                const status = blockStatus(blockAverages[index]);
+                return `
+                    <article class="rounded-3xl border border-igsa-line bg-white p-5">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <p class="text-xs uppercase tracking-[0.3em] text-igsa-muted font-semibold">${block.title}</p>
+                                <h3 class="text-lg font-bold text-igsa-ink mt-1">${block.subtitle}</h3>
+                            </div>
+                            <span class="inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${status.badge}">${status.label}</span>
+                        </div>
+                        <p class="mt-4 text-3xl font-bold ${status.color}">${blockAverages[index].toFixed(1)} / 5</p>
+                        <p class="mt-2 text-sm text-igsa-muted leading-relaxed">${block.tip}</p>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        async function submitForm() {
+            const form = document.getElementById('questionnaireForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const submitBtnText = document.getElementById('submitBtnText');
+            const submitSpinner = document.getElementById('submitSpinner');
+            const sendStatus = document.getElementById('sendStatus');
+
+            if (!form.reportValidity()) {
                 return;
             }
 
-            // Exibir Spinner e desabilitar botão
-            const btn = document.getElementById('btnCalcular');
-            const btnText = document.getElementById('btnText');
-            const btnSpinner = document.getElementById('btnSpinner');
-            
-            btnText.innerText = "Calculando...";
-            btnSpinner.classList.remove('hidden');
-            btn.disabled = true;
+            const answers = [];
+            let allAnswered = true;
 
-            // Tratamento de Identificação (Removido da interface, mantido em branco para o Sheets)
-            const nomeFinal = "";
-            const cargoFinal = "";
-
-            // Cálculos Conforme Planilha
-            const maturidadePercentual = Math.round((total / 30) * 100);
-            
-            // 1. Classificação
-            let classificacao = "";
-            let classBgClass = "";
-            let classTextClass = "";
-            if (total <= 12) {
-                classificacao = "Baixa Autorresponsabilidade";
-                classBgClass = "bg-red-100";
-                classTextClass = "text-red-700";
-            } else if (total <= 18) {
-                classificacao = "Operacional";
-                classBgClass = "bg-amber-100";
-                classTextClass = "text-amber-700";
-            } else if (total <= 24) {
-                classificacao = "Intermediário Estratégico";
-                classBgClass = "bg-yellow-50 border border-yellow-200";
-                classTextClass = "text-igsa-goldDark";
-            } else {
-                classificacao = "Alta Performance";
-                classBgClass = "bg-emerald-100";
-                classTextClass = "text-emerald-800";
-            }
-
-            // 2. Dimensão Prioritária (Menor Nota - Lógica INDEX MATCH MATCH)
-            let menorNota = 6;
-            let indexMenor = -1;
-            for (let i = 0; i < valores.length; i++) {
-                if (valores[i] < menorNota) {
-                    menorNota = valores[i];
-                    indexMenor = i;
-                }
-            }
-            const dimensaoPrioritaria = nomesDimensoes[indexMenor];
-
-            // 3. Recomendação Dinâmica
-            let recomendacao = "";
-            if (total <= 12) {
-                recomendacao = "Atenção: assuma o controle de prazos, decisões e erros antes de ser cobrado. Comece pela dimensão prioritária indicada no painel.";
-            } else if (total <= 18) {
-                recomendacao = "Saia do operacional: comunique-se proativamente, autorrevise suas entregas e exercite a autonomia decisória dentro da sua alçada.";
-            } else if (total <= 24) {
-                recomendacao = "Bom nível — desenvolva visão estratégica e antecipação de riscos para alcançar a alta performance.";
-            } else {
-                recomendacao = "Alta performance — mantenha o padrão e seja referência de autorresponsabilidade para o time.";
-            }
-
-            // Prepara gravação no Google Sheets via POST
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbxqPnfzuJNvjPH7JPB6Kk5b9vRQl2i4IgCrxAoX2rmAniMww8r09nQaCR2ft3K5eVmm/exec';
-            
-            const params = new URLSearchParams();
-            params.append('nome', nomeFinal);
-            params.append('cargo', cargoFinal);
-            params.append('gestao_prazos', valores[0]);
-            params.append('qualidade_entregas', valores[1]);
-            params.append('autonomia_decisoria', valores[2]);
-            params.append('comunicacao', valores[3]);
-            params.append('gestao_erros', valores[4]);
-            params.append('consciencia_impacto', valores[5]);
-            params.append('pontuacao_total', total);
-            params.append('maturidade', `${maturidadePercentual}%`);
-            params.append('classificacao', classificacao);
-            params.append('dimensao_prioritaria', dimensaoPrioritaria);
-            params.append('recomendacao', recomendacao);
-            
-            const dataPreenchimentoStr = new Date().toISOString().slice(0, 19).replace('T', ' ');
-            params.append('data_preenchimento', dataPreenchimentoStr);
-
-            // Envia ao Google Sheets de forma silenciosa/robusta com 'no-cors'
-            fetch(scriptURL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: params
-            })
-            .then(() => {
-                finalizarExibicaoResultados(total, maturidadePercentual, classificacao, classBgClass, classTextClass, dimensaoPrioritaria, recomendacao, nomesDimensoes, valores);
-            })
-            .catch(error => {
-                console.error('Erro de envio:', error);
-                // Mesmo se falhar o envio por queda de rede, exibe os resultados ao usuário localmente
-                finalizarExibicaoResultados(total, maturidadePercentual, classificacao, classBgClass, classTextClass, dimensaoPrioritaria, recomendacao, nomesDimensoes, valores);
-            });
-        }
-
-        // Função auxiliar para revelar o painel de resultados e atualizar o gráfico
-        function finalizarExibicaoResultados(total, maturidade, classificacao, bgClass, textClass, dimensaoPrioritaria, recomendacao, labels, valores) {
-            // Restaura o botão principal
-            const btn = document.getElementById('btnCalcular');
-            const btnText = document.getElementById('btnText');
-            const btnSpinner = document.getElementById('btnSpinner');
-            
-            btnText.innerText = "Diagnóstico Gerado com Sucesso!";
-            btnSpinner.classList.add('hidden');
-            
-            // Atualiza campos do painel
-            document.getElementById('pontuacaoTotal').innerText = `${total} / 30`;
-            document.getElementById('percentualMaturidade').innerText = `${maturidade}%`;
-            
-            const scoreBar = document.getElementById('scoreBar');
-            scoreBar.style.width = `${(total / 30) * 100}%`;
-            // Altera cor da barra conforme score
-            if (total <= 12) {
-                scoreBar.className = "bg-red-500 h-full rounded-full transition-all duration-500";
-            } else if (total <= 18) {
-                scoreBar.className = "bg-amber-500 h-full rounded-full transition-all duration-500";
-            } else if (total <= 24) {
-                scoreBar.className = "bg-igsa-gold h-full rounded-full transition-all duration-500";
-            } else {
-                scoreBar.className = "bg-emerald-500 h-full rounded-full transition-all duration-500";
-            }
-
-            const labelClass = document.getElementById('classificacaoLabel');
-            labelClass.innerText = classificacao;
-            labelClass.className = `inline-block px-3 py-1.5 rounded-md font-bold text-sm uppercase tracking-wider ${bgClass} ${textClass}`;
-
-            document.getElementById('dimensaoPrioritaria').innerText = dimensaoPrioritaria;
-            document.getElementById('recomendacaoTexto').innerText = recomendacao;
-
-            // Exibe a seção de resultados com animação de fade-in
-            const resSection = document.getElementById('resultadoSection');
-            resSection.classList.remove('hidden');
-            setTimeout(() => {
-                resSection.classList.remove('opacity-0');
-            }, 50);
-
-            // Renderiza o gráfico radar
-            renderRadar(labels, valores);
-
-            // Rola suavemente
-            resSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-
-        // Função de renderização do radar chart
-        function renderRadar(labels, data) {
-            const ctx = document.getElementById('radarChart').getContext('2d');
-
-            if (myChart) {
-                myChart.destroy();
-            }
-
-            // Definição de cores semafóricas individuais para os pontos dos marcadores
-            const pointBgColors = data.map(nota => {
-                if (nota <= 2) return '#EF4444'; // Crítico (Vermelho)
-                if (nota === 3) return '#F59E0B'; // Atenção (Amarelo)
-                return '#10B981'; // Forte (Verde)
-            });
-
-            const pointBorderColors = data.map(nota => {
-                if (nota <= 2) return '#DC2626';
-                if (nota === 3) return '#D97706';
-                return '#059669';
-            });
-
-            myChart = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['Gestão de Prazos', 'Qualidade', 'Autonomia', 'Comunicação', 'Erros', 'Impacto'],
-                    datasets: [{
-                        label: 'Sua Nota',
-                        data: data,
-                        // Estilização institucional IGSA
-                        backgroundColor: 'rgba(143, 29, 33, 0.15)', // Vermelho IGSA semi-transparente
-                        borderColor: '#C5A059',                      // Dourado IGSA para a linha de contorno
-                        borderWidth: 2.5,
-                        pointBackgroundColor: pointBgColors,         // Pontos com cor semafórica
-                        pointBorderColor: pointBorderColors,
-                        pointBorderWidth: 1.5,
-                        pointRadius: 5.5,
-                        pointHoverRadius: 7
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    scales: {
-                        r: {
-                            angleLines: { 
-                                color: '#EBE6DD' 
-                            },
-                            grid: { 
-                                color: '#EBE6DD' 
-                            },
-                            pointLabels: {
-                                color: '#4A4035',
-                                font: { 
-                                    size: 11, 
-                                    family: "'Inter', sans-serif",
-                                    weight: '600'
-                                }
-                            },
-                            min: 0,
-                            max: 5,
-                            ticks: { 
-                                stepSize: 1, 
-                                display: true,
-                                color: '#A89E90',
-                                backdropColor: 'transparent',
-                                font: {
-                                    size: 10
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: { 
-                            display: false 
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return ` Nota: ${context.raw}`;
-                                }
-                            }
-                        }
+            blocks.forEach((block, blockIndex) => {
+                block.items.forEach((_, questionIndex) => {
+                    const fieldName = `${block.slug}_q${questionIndex + 1}`;
+                    const value = getFieldValue(fieldName);
+                    if (value === null) {
+                        allAnswered = false;
                     }
+                    answers.push({ blockIndex, questionIndex, value, fieldName });
+                });
+            });
+
+            if (!allAnswered) {
+                alert('Responda todas as 18 perguntas antes de gerar o diagnóstico.');
+                return;
+            }
+
+            const timestamps = buildDeviceTimestamp();
+            form.elements.data_resposta.value = timestamps.localDate;
+            form.elements.timestamp_dispositivo.value = timestamps.deviceTimestamp;
+
+            const total = answers.reduce((sum, item) => sum + item.value, 0);
+            const percent = Math.round((total / 90) * 100);
+            const average = total / 18;
+
+            const blockSums = blocks.map(() => 0);
+            const blockCounts = blocks.map(() => 0);
+            answers.forEach(item => {
+                blockSums[item.blockIndex] += item.value;
+                blockCounts[item.blockIndex] += 1;
+            });
+
+            const blockAverages = blockSums.map((sum, index) => sum / blockCounts[index]);
+            const weakestBlockIndex = blockAverages.indexOf(Math.min(...blockAverages));
+
+            let weakestQuestionKey = '0-0';
+            let weakestQuestionValue = 99;
+            answers.forEach(item => {
+                if (item.value < weakestQuestionValue) {
+                    weakestQuestionValue = item.value;
+                    weakestQuestionKey = `${item.blockIndex}-${item.questionIndex}`;
                 }
             });
+
+            const readiness = readinessLabel(percent);
+            const blockLabels = blocks.map(block => block.subtitle);
+            const recommendation = recommendationByScore(percent, weakestBlockIndex, weakestQuestionKey);
+
+            const overallBadge = document.getElementById('overallBadge');
+            const totalScore = document.getElementById('totalScore');
+            const overallAverage = document.getElementById('overallAverage');
+            const overallPercent = document.getElementById('overallPercent');
+            const classificationText = document.getElementById('classificationText');
+            const summaryText = document.getElementById('summaryText');
+            const priorityLabel = document.getElementById('priorityLabel');
+            const priorityTip = document.getElementById('priorityTip');
+            const recommendationText = document.getElementById('recommendationText');
+            const scoreBar = document.getElementById('scoreBar');
+
+            overallBadge.textContent = readiness.label;
+            overallBadge.className = `inline-flex items-center rounded-full px-4 py-2 text-sm font-bold uppercase tracking-wider ${readiness.color}`;
+
+            totalScore.textContent = `${total} / 90`;
+            overallAverage.textContent = average.toFixed(1);
+            overallPercent.textContent = `${percent}%`;
+            scoreBar.style.width = `${percent}%`;
+
+            classificationText.textContent = readiness.label;
+            summaryText.textContent = `Média geral de ${average.toFixed(1)} pontos por item, com leitura por bloco para identificar o ponto mais sensível.`;
+
+            priorityLabel.textContent = blockLabels[weakestBlockIndex];
+            priorityTip.textContent = `${blocks[weakestBlockIndex].tip} ${questionAdvice[weakestQuestionKey] ? questionAdvice[weakestQuestionKey] : ''}`;
+            recommendationText.textContent = recommendation;
+
+            buildBlockSummary(blockAverages);
+
+            const resultSection = document.getElementById('resultSection');
+            resultSection.classList.remove('hidden');
+            requestAnimationFrame(() => resultSection.classList.remove('opacity-0'));
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            const payload = new URLSearchParams();
+            const formData = new FormData(form);
+            for (const [key, value] of formData.entries()) {
+                payload.append(key, value);
+            }
+
+            payload.append('total', String(total));
+            payload.append('media_geral', average.toFixed(1));
+            payload.append('percentual', String(percent));
+            payload.append('classificacao', readiness.label);
+            payload.append('bloco_atencao', blockLabels[weakestBlockIndex]);
+            payload.append('recomendacao', recommendation);
+            payload.append('questao_mais_baixa', weakestQuestionKey);
+
+            answers.forEach((item, index) => {
+                payload.append(`item_${index + 1}`, String(item.value));
+            });
+
+            if (GOOGLE_SCRIPT_URL) {
+                submitBtn.disabled = true;
+                submitBtnText.textContent = 'Enviando...';
+                submitSpinner.classList.remove('hidden');
+
+                try {
+                    await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: payload
+                    });
+                    sendStatus.textContent = 'Respostas registradas no Google Sheets.';
+                } catch (error) {
+                    console.error(error);
+                    sendStatus.textContent = 'Resultado exibido localmente. Verifique a URL do Web App para registrar no Sheets.';
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtnText.textContent = 'Gerar diagnóstico';
+                    submitSpinner.classList.add('hidden');
+                }
+            } else {
+                sendStatus.textContent = 'Configure a URL do Apps Script para registrar as respostas no Google Sheets.';
+            }
         }
+
+        renderQuestionnaire();
+        document.getElementById('submitBtn').addEventListener('click', submitForm);
     </script>
 </body>
 </html>
